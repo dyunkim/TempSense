@@ -2,11 +2,11 @@
 #include <cmath>
 Servo servo;
 const static int MED_VALUE = 95;
-const static int MIN_VALUE = 55;
-const static int MAX_VALUE = 135;
+const static int MIN_VALUE = 60;
+const static int MAX_VALUE = 130;
 const static int temperaturePin = 0;
 const static int motorPin = 9;
-const static float MAX_ERROR_MARGIN = 1.00;
+const static float MAX_ERROR_MARGIN = 2.00;
 
 void setup() {
   //  pinMode(motorPin, OUTPUT);
@@ -18,11 +18,24 @@ void setup() {
 void loop() {
   
 }
+
+
 void changeTemperature(int temperature) {
   float error = temperature - readTemperature();
   while(abs(error) <= MAX_ERROR_MARGIN) {
+    if (error > 0) {
+      changePwm(
+    } else {
+      
+    }
     
+    delay(1000);
+    error = temperature - readTemperature();
   }
+}
+
+float mapTempDiff(float error) {
+  
 }
 
 bool changePwm(int value) {
@@ -32,7 +45,7 @@ bool changePwm(int value) {
     return true;
   }
   else {
-    Serial.print("value out range\n");
+    Serial.print("value out of range\n");
     return false;
   }
 }
@@ -47,8 +60,6 @@ void readTemperature() {
 
   Serial.print("Degrees F: " + "\n");
   Serial.println(degreesF);
-
-  delay(1000);
 }
 
 float getVoltage(int pin) {
