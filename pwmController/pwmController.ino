@@ -82,12 +82,13 @@ void loop() {
   }
 
 
-  if (Serial.available()) {
-    requestTemp = Serial.parseInt();
-    Serial.print("Requesting Temperature: ");
-    Serial.println(requestTemp);
-  }
-  changeTemperature(requestTemp);
+//  if (Serial.available()) {
+//    requestTemp = Serial.parseInt();
+//    Serial.print("Requesting Temperature: ");
+//    Serial.println(requestTemp);
+//  }
+//  changeTemperature(requestTemp);
+  changeTemperature(temp);
   delay(1000);
 
   //  if (Serial.available())
