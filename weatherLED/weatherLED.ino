@@ -31,9 +31,9 @@ Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_COUNT, PIN, NEO_GRB + NEO_KHZ800)
 int windDelaySpeed = 1000;
 bool PRECIPITATION = false;
 int BRIGHTNESS = 45;
-float temp;
-float precip;
-float windSpeed;
+float temp = -1;
+float precip = -1;
+float windSpeed = -1;
 void setup()
 {
   Serial.begin(9600);
@@ -41,50 +41,53 @@ void setup()
   clearLEDs();   // This function, defined below, turns all LEDs off...
   leds.setBrightness(BRIGHTNESS);
   leds.show();   // ...but the LEDs don't actually update until you call this.
+  while (temp == -1 && precip == -1 && windSpeed == -1) {
+    String tempString;
+    String windString;
+    String precipString;
+    delay(1000);
+    int count = 0;
+    while (Serial.available() > 0) {
+      if (Serial.peek() != 'x' && count == 0) {
+        char c = Serial.read();
+        tempString += c;
+      }
+      else if (Serial.peek() != 'x' && count == 1) {
+        char c = Serial.read();
+        precipString += c;
+      }
+      else if (Serial.peek() != 'x' && count == 2) {
+        char c = Serial.read();
+        windString += c;
+      }
+      else {
+        char trash = Serial.read();
+        if (count == 2) {
+          temp = tempString.toFloat();
+          precip = precipString.toFloat();
+          windSpeed = windString.toFloat();
+        }
+        count++;
+      }
+    }
+  }
+  if(precip > 0) PRECIPITATION = true;
+  if(windSpeed >= 1){
+    windDelaySpeed /= windSpeed;
+  }
 }
 
 void loop()
 {
-  String tempString;
-  String windString;
-  String precipString;
-  delay(1000);
-  int count = 0;
-
-  while (Serial.available() > 0) {
-    if (Serial.peek() != 'x' && count == 0) {
-      char c = Serial.read();
-      tempString += c;
-    }
-    else if (Serial.peek() != 'x' && count == 1) {
-      char c = Serial.read();
-      precipString += c;
-    }
-    else if (Serial.peek() != 'x' && count == 2) {
-      char c = Serial.read();
-      windString += c;
-    }
-    else {
-      char trash = Serial.read();
-      if(count == 2) {
-        temp = tempString.toFloat();
-        precip = precipString.toFloat();
-        windSpeed = windString.toFloat();
-      }
-      count++;
-    }
-  }
-
-  //  if(temp != 0) staticColor();
-  PRECIPITATION = false;
-  if (PRECIPITATION) {    //floral white for snow
-    for (int i = 0; i < 10; i++) {
+  if (PRECIPITATION && windSpeed >= 1) {    //floral white for snow
       // cylon function: first param is color, second is time (in ms) between cycles
       cylon(BLUE, windDelaySpeed);  // Indigo cylon eye!
-    }
+  }
+  else if (windSpeed >= 1) {
+    cylon(WHITESMOKE, windDelaySpeed);
   }
   else {
-    //    staticColor();
+    staticColor();
   }
 }
 

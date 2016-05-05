@@ -57,7 +57,6 @@ while True:
 		dataList.append(zipData["feelslike_f"])
 		dataList.append(zipData["precip_today_in"])
 		dataList.append(zipData["wind_mph"])
-		print dataList
 	elif choice == 5:
 		print "Good Bye!"
 		break
