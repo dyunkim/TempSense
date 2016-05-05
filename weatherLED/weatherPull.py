@@ -1,7 +1,6 @@
 import urllib2
 import json
 import serial
-import time
 
 cities = {}
 beijingString = "/q/zmw:00000.1.54511.json"	#Beijing code
@@ -12,12 +11,12 @@ cities[beijingString] = ""
 cities[dallasString] = ""
 cities[sydneyString] = ""
 
-for x in cities:
-	url = "http://api.wunderground.com/api/98de3a7071959cbd/conditions/q/"
-	url += x
-	response = urllib2.urlopen(url)
-	jsonObj = json.loads(response.read())
-	cities[x] = jsonObj["current_observation"]
+# for x in cities:
+# 	url = "http://api.wunderground.com/api/98de3a7071959cbd/conditions/q/"
+# 	url += x
+# 	response = urllib2.urlopen(url)
+# 	jsonObj = json.loads(response.read())
+# 	cities[x] = jsonObj["current_observation"]
 
 while True:
 	dataList = []
@@ -47,29 +46,21 @@ while True:
 		dataList.append(cities[key]["wind_mph"])
 	elif choice == 4:
 		zipcode = input("Enter Zipcode: ")
-		url = "http://api.wunderground.com/api/98de3a7071959cbd/conditions/q/"
-		url += (str(zipcode) + ".json")
-		response = urllib2.urlopen(url)
-		jsonObj = json.loads(response.read())
-		zipData = jsonObj["current_observation"]
-		print "Getting data from: "
-		print zipData["display_location"]["full"]
-		dataList.append(zipData["feelslike_f"])
-		dataList.append(zipData["precip_today_in"])
-		dataList.append(zipData["wind_mph"])
+		# url = "http://api.wunderground.com/api/98de3a7071959cbd/conditions/q/"
+		# url += (str(zipcode) + ".json")
+		# response = urllib2.urlopen(url)
+		# jsonObj = json.loads(response.read())
+		# zipData = jsonObj["current_observation"]
+		# print zipData["display_location"]["full"]
+		# dataList.append(zipData["feelslike_f"])
+		# dataList.append(zipData["precip_today_in"])
+		# dataList.append(zipData["wind_mph"])
+		dataList = ['65.8', '0.00', 0.3]
 		print dataList
 	elif choice == 5:
 		print "Good Bye!"
 		break
-	else:
-		print "Not a valid option!"
-		continue
 	ser = serial.Serial('COM3', 9600)
-	ser.flush()
-	time.sleep(2)
-	send = ""
 	for x in dataList:
-		send += (str(x) + "x")
-	ser.write(send)
-	time.sleep(2)
-	ser.close()
+		serial.write(x)
+
